@@ -1,4 +1,4 @@
 [submodule "ext/etp.net"]
 	path = ext/etp.net
-	url = ../etp.net
+	url = https://github.com/SergeyIlyin/etp-devkit.git
 	branch = netstandard
