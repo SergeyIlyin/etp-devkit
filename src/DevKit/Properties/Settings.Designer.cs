@@ -98,10 +98,13 @@ namespace Energistics.Etp.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Native")]
-        public string DefaultWebSocketType {
-            get {
-                return ((string)(this["DefaultWebSocketType"]));
+        public Energistics.Etp.Common.Datatypes.WebSocketType DefaultWebSocketType
+        {
+            get
+            {
+                return ((Energistics.Etp.Common.Datatypes.WebSocketType)(this["DefaultWebSocketType"]));
             }
         }
     }
 }
+

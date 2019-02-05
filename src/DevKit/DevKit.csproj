@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net461</TargetFrameworks>
     <RootNamespace>Energistics.Etp</RootNamespace>
-    <AssemblyName>ETP.DevKit</AssemblyName>
+    <AssemblyName>ETP.DevKit.Core</AssemblyName>
     <Product>Energistics Transfer Protocol</Product>
     <Authors>Welly Tambunan, William McKenzie, Bobby Diaz</Authors>
     <AssemblyVersion>1.2.0.0</AssemblyVersion>
@@ -21,8 +21,15 @@
   </ItemGroup>
 
   <ItemGroup>
+
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+
     <PackageReference Include="SuperSocket.ClientEngine.Core" Version="0.10.0" />
     <PackageReference Include="SuperWebSocket" Version="0.9.0.2" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.5.3" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.5.3" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.5.3" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.5.3" />
     <PackageReference Include="WebSocket4Net" Version="0.15.2" />
   </ItemGroup>
 
@@ -35,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="System.Web" />
+    <!--<Reference Include="System.Web" />-->
     
   </ItemGroup>
 
@@ -44,11 +51,7 @@
   <ItemGroup>
    <None Update="Properties\Settings.settings" Generator="SettingsSingleFileGenerator" LastGenOutput="Settings.Designer.cs" />
   <Compile Update="Properties\Settings.Designer.cs" AutoGen="True" DependentUpon="Settings.settings" />
-   <!-- <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>-->
+
   </ItemGroup>
 
   <ItemGroup>
