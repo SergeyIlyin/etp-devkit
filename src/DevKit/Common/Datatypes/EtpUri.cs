@@ -375,8 +375,8 @@ namespace Energistics.Etp.Common.Datatypes
 
             try
             {
-                var values = HttpUtility.ParseQueryString(queryString);
-                var format = values[FormatParameterName]?.Trim();
+                var values = Microsoft.AspNetCore.WebUtilities. QueryHelpers.ParseQuery(queryString);
+                var format = values[FormatParameterName].FirstOrDefault()?.Trim();
 
                 return string.IsNullOrWhiteSpace(format) ? defaultValue : format;
             }

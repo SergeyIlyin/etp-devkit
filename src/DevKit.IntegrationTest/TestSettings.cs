@@ -19,6 +19,7 @@
 using Energistics.Etp.Common.Datatypes;
 using Energistics.IntegrationTest;
 
+
 namespace Energistics
 {
     /// <summary>
@@ -69,7 +70,7 @@ namespace Energistics
         /// <summary>
         /// The websocket type.
         /// </summary>
-        public static WebSocketType WebSocketType = Etp.Properties.Settings.Default.DefaultWebSocketType;
+        public static WebSocketType WebSocketType =Etp.Properties. Settings.Default.DefaultWebSocketType;
 
         /// <summary>
         /// The username for the proxy.

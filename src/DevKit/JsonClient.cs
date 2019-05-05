@@ -254,8 +254,8 @@ namespace Energistics.Etp
             if (string.IsNullOrWhiteSpace(uri.Query))
                 return etp11Type;
 
-            var queryString = HttpUtility.ParseQueryString(uri.Query);
-            var etpVersion = queryString[EtpSettings.GetVersionHeader];
+            var queryString = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+            var etpVersion = queryString[EtpSettings.GetVersionHeader].FirstOrDefault();
 
             return etpVersion == EtpSettings.Etp12SubProtocol ? etp12Type : etp11Type;
         }
