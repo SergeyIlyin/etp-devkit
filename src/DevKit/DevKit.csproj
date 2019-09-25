@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
+    <TargetFrameworks>net462</TargetFrameworks>
     <RootNamespace>Energistics.Etp</RootNamespace>
     <AssemblyName>ETP.DevKit.Core</AssemblyName>
     <Product>Energistics Transfer Protocol</Product>
     <Authors>Welly Tambunan, William McKenzie, Bobby Diaz</Authors>
     <AssemblyVersion>1.2.0.0</AssemblyVersion>
     <FileVersion>1.2.0.0</FileVersion>
-    <Version>1.2.0-dev30</Version>
+    <Version>1.2.0-dev31</Version>
     <Company>Energistics</Company>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
     <PackageIconUrl>https://bitbucket.org/account/energistics/avatar/</PackageIconUrl>
