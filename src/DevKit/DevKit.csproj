@@ -7,7 +7,7 @@
     <Authors>Welly Tambunan, William McKenzie, Bobby Diaz</Authors>
     <AssemblyVersion>1.2.0.0</AssemblyVersion>
     <FileVersion>1.2.0.0</FileVersion>
-    <Version>1.2.0-dev31.5</Version>
+    <Version>1.2.0-dev31.6</Version>
     <Company>Energistics</Company>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
     <PackageIconUrl>https://bitbucket.org/account/energistics/avatar/</PackageIconUrl>
@@ -24,12 +24,14 @@
 
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
 
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.6.0" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.6.0" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.6.0" />
-    <PackageReference Include="System.ServiceModel.Security" Version="4.6.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.1" />
+
+    <PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
