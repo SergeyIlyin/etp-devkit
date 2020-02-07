@@ -127,9 +127,7 @@ namespace Energistics.Etp
             {
                 case WebSocketType.Native:
                     return new Native.EtpClient(uri, application, version, etpSubProtocol, headers);
-                case WebSocketType.WebSocket4Net:
-                    return new WebSocket4Net.EtpClient(uri, application, version, etpSubProtocol, headers);
-
+               
                 default:
                     throw new ArgumentException($"Unrecognized WebSocket type: {webSocketType}", "webSocketType");
             }
@@ -166,9 +164,7 @@ namespace Energistics.Etp
             {
                 case WebSocketType.Native:
                     return new Native.EtpSelfHostedWebServer(port, application, version);
-                case WebSocketType.WebSocket4Net:
-                    return new WebSocket4Net.EtpSelfHostedWebServer(port, application, version);
-
+             
                 default:
                     throw new ArgumentException($"Unrecognized WebSocket type: {webSocketType}", "webSocketType");
             }
