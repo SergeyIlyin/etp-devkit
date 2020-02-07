@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
+using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 using Energistics.Etp.Common;
@@ -114,7 +115,25 @@ namespace Energistics.Etp.Native
 
             try
             {
-                await ClientSocket.ConnectAsync(Uri, token).ConfigureAwait(false);
+                //////////////////////////////////////////////////////////////////////
+                // Work around based on https://stackoverflow.com/questions/40502921
+
+                var prevIdleTime = ServicePointManager.MaxServicePointIdleTime;
+                ServicePointManager.MaxServicePointIdleTime = Timeout.Infinite;
+
+                // End work around
+                //////////////////////////////////////////////////////////////////////
+
+                await ClientSocket.ConnectAsync(Uri, token).ConfigureAwait(CaptureAsyncContext);
+
+                //////////////////////////////////////////////////////////////////////
+                // Work around based on https://stackoverflow.com/questions/40502921
+
+                ServicePointManager.MaxServicePointIdleTime = prevIdleTime;
+
+                // End work around
+                //////////////////////////////////////////////////////////////////////
+
                 Logger.Verbose($"Connected to {Uri}");
             }
             catch (OperationCanceledException)
@@ -130,7 +149,7 @@ namespace Energistics.Etp.Native
                 return false;
 
             _connectionHandlingTask = Task.Factory.StartNew(
-                async () => await HandleConnection(token).ConfigureAwait(false), token,
+                async () => await HandleConnection(token).ConfigureAwait(CaptureAsyncContext), token,
                 TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach,
                 TaskScheduler.Default).Unwrap();
 
@@ -153,7 +172,7 @@ namespace Energistics.Etp.Native
             try
             {
                 if (_connectionHandlingTask != null)
-                    await _connectionHandlingTask.ConfigureAwait(false);
+                    await _connectionHandlingTask.ConfigureAwait(CaptureAsyncContext);
             }
             catch (OperationCanceledException)
             {
@@ -166,7 +185,7 @@ namespace Energistics.Etp.Native
             }
 
             if (IsOpen)
-                await base.CloseAsyncCore(reason).ConfigureAwait(false);
+                await base.CloseAsyncCore(reason).ConfigureAwait(CaptureAsyncContext);
         }
 
         /// <summary>
@@ -191,6 +210,22 @@ namespace Energistics.Etp.Native
             // TODO: Handle using default credentials
 
             ClientSocket.Options.Proxy = proxy;
+        }
+
+        /// <summary>
+        /// Sets security options.
+        /// </summary>
+        /// <param name="enabledSslProtocols">The enabled SSL and TLS protocols.</param>
+        /// <param name="acceptInvalidCertificates">Whether or not to accept invalid certificates.</param>
+        public void SetSecurityOptions(SecurityProtocolType enabledSslProtocols, bool acceptInvalidCertificates)
+        {
+            ServicePointManager.SecurityProtocol = enabledSslProtocols;
+
+            if (acceptInvalidCertificates)
+                ServicePointManager.ServerCertificateValidationCallback +=
+                    (sender, certificate, chain, sslPolicyErrors) => true;
+            else
+                ServicePointManager.ServerCertificateValidationCallback = null;
         }
 
         /// <summary>

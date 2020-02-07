@@ -28,6 +28,7 @@ using Avro.Specific;
 using Energistics.Etp.Common.Datatypes;
 using Energistics.Etp.Properties;
 using Newtonsoft.Json.Linq;
+using Nito.AsyncEx;
 
 
 namespace Energistics.Etp.Common
@@ -42,7 +43,7 @@ namespace Energistics.Etp.Common
         private long _messageId;
         private bool? _isJsonEncoding;
         // Used to ensure only one thread at a time sends data over a websocket.
-        private readonly SemaphoreSlim _sendLock = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim _sendLock = new SemaphoreSlim(1, 1);
         // Used to ensure only one thread at a time manipulates the collection of handlers.
         private readonly ReaderWriterLockSlim _handlersLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
@@ -54,7 +55,9 @@ namespace Energistics.Etp.Common
         /// <param name="version">The application version.</param>
         /// <param name="headers">The WebSocket or HTTP headers.</param>
         /// <param name="isClient">Whether or not this is the client-side of the session.</param>
-        protected EtpSession(EtpVersion etpVersion, string application, string version, IDictionary<string, string> headers, bool isClient)
+        /// <param name="captureAsyncContext">Where or not the synchronization context should be captured for async tasks.</param>
+        protected EtpSession(EtpVersion etpVersion, string application, string version, IDictionary<string, string> headers, bool isClient, bool captureAsyncContext)
+            : base(captureAsyncContext)
         {
             IsClient = isClient;
 
@@ -292,7 +295,7 @@ namespace Energistics.Etp.Common
         public long SendMessage<T>(IMessageHeader header, T body, Action<IMessageHeader> onBeforeSend = null)
             where T : ISpecificRecord
         {
-            return SendMessageAsync(header, body, onBeforeSend).Result;
+            return AsyncContext.Run(() => SendMessageAsync(header, body, onBeforeSend));
         }
 
         /// <summary>
@@ -308,33 +311,40 @@ namespace Energistics.Etp.Common
             // Lock to ensure only one thread at a time attempts to send data and to ensure that messages are sent with sequential IDs
             try
             {
-                await _sendLock.WaitAsync().ConfigureAwait(false);
-
-                if (!IsOpen)
+                try
                 {
-                    Log("Warning: Sending on a session that is not open.");
-                    Logger.Debug("Sending on a session that is not open.");
-                    return -1;
+                    await _sendLock.WaitAsync().ConfigureAwait(CaptureAsyncContext);
+
+                    if (!IsOpen)
+                    {
+                        Log("Warning: Sending on a session that is not open.");
+                        Logger.Debug("Sending on a session that is not open.");
+                        return -1;
+                    }
+
+                    header.MessageId = NewMessageId();
+
+                    // Call the pre-send action in case any deterministic handling is needed with the actual message ID.
+                    // Must be invoked before sending to ensure the response is not asynchronously processed before this method returns.
+                    onBeforeSend?.Invoke(header);
+
+                    // Log message just before it gets sent if needed.
+                    Sending(header, body);
+
+                    if (IsJsonEncoding)
+                    {
+                        var message = EtpExtensions.Serialize(new object[] {header, body});
+                        await SendAsync(message).ConfigureAwait(CaptureAsyncContext);
+                    }
+                    else
+                    {
+                        var data = body.Encode(header, SupportedCompression);
+                        await SendAsync(data, 0, data.Length).ConfigureAwait(CaptureAsyncContext);
+                    }
                 }
-
-                header.MessageId = NewMessageId();
-
-                // Call the pre-send action in case any deterministic handling is needed with the actual message ID.
-                // Must be invoked before sending to ensure the response is not asynchronously processed before this method returns.
-                onBeforeSend?.Invoke(header);
-
-                // Log message just before it gets sent if needed.
-                Sending(header, body);
-
-                if (IsJsonEncoding)
+                finally
                 {
-                    var message = EtpExtensions.Serialize(new object[] {header, body});
-                    await SendAsync(message).ConfigureAwait(false);
-                }
-                else
-                {
-                    var data = body.Encode(header, SupportedCompression);
-                    await SendAsync(data, 0, data.Length).ConfigureAwait(false);
+                    _sendLock.Release();
                 }
             }
             catch (Exception ex)
@@ -342,10 +352,6 @@ namespace Energistics.Etp.Common
                 // Handler already locked by the calling code...
                 return Handler(header.Protocol)
                     .ProtocolException((int)EtpErrorCodes.InvalidState, ex.Message, header.MessageId);
-            }
-            finally
-            {
-                _sendLock.Release();
             }
 
             return header.MessageId;
@@ -396,10 +402,10 @@ namespace Energistics.Etp.Common
             // Closing sends messages over the websocket so need to ensure no other messages are being sent when closing
             try
             {
-                await _sendLock.WaitAsync().ConfigureAwait(false);
+                await _sendLock.WaitAsync().ConfigureAwait(CaptureAsyncContext);
                 Logger.Trace($"Closing Session: {reason}");
 
-                await CloseAsyncCore(reason).ConfigureAwait(false);
+                await CloseAsyncCore(reason).ConfigureAwait(CaptureAsyncContext);
             }
             finally
             {

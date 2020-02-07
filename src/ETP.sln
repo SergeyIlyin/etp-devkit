@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevKit", "DevKit\DevKit.csproj", "{30DE888B-A6B7-4528-AD89-324A7F9B0F4C}"
 EndProject
@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevKit.UnitTest", "DevKit.U
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevKit.TestApp", "DevKit.TestApp\DevKit.TestApp.csproj", "{6DCD4AA3-AA28-49A8-BCA9-99D534B34864}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETP.Messages", "..\ext\etp.net\src\ETP.Messages\ETP.Messages.csproj", "{1A788A14-70D7-4B2B-96A3-086C86D0C925}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ETP.Messages", "..\ext\etp.net\src\ETP.Messages\ETP.Messages.csproj", "{1A788A14-70D7-4B2B-96A3-086C86D0C925}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{796171A3-8841-45DF-A032-97A649F3B90D}"
 	ProjectSection(SolutionItems) = preProject
@@ -47,5 +47,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F665B47A-B951-4C8E-B72D-A7A107427D8E}
 	EndGlobalSection
 EndGlobal
